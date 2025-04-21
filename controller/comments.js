@@ -1,13 +1,80 @@
 const { createClient } = require('@supabase/supabase-js');
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
 
 const supabase = createClient(process.env.supabase_url, process.env.supabase_key);
 
 const page_size = 10;
 
+function validateComment(c) {
+    const errors = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    if (c.usernname) {
+        if(c.username.length < 3) {
+            errors.push('Username must be at least 3 characters long');
+        }
+        if(c.username.length > 15) {
+            errors.push('Username must be at most 20 characters long');
+        }
+    } else {
+        errors.push('Name is required');
+    }
+    if (c.email) {
+        if(!emailRegex.test(c.email)) {
+            errors.push('Invalid email address');
+        }
+        if (c.email.length > 20) {
+            errors.push('Email must be at most 20 characters long');
+        }
+    }
+    if (c.website) {
+        if (c.website.length > 40) {
+            errors.push('Website URL must be at most 40 characters long');
+        }
+        if (!urlRegex.test(c.website)) {
+            errors.push('Invalid website URL');
+        }
+    }
+    if (c.content) {
+        if (c.content.length < 5) {
+            errors.push('Comment content must be at least 5 characters long');
+        }
+        if (c.content.length > 1000) {
+            errors.push('Comment content must be at most 1000 characters long');
+        }
+    } else {
+        errors.push('Comment content is required');
+    }
+    return { ok: errors.length == 0, errors };
+}
+
 exports.createComment = async (req, res) => {
     try {
+        const ip = req.ip;
         const jsonO = req.body;
-        console.log(jsonO.content)
+
+        const window = new JSDOM('').window;
+        const DOMPurify = createDOMPurify(window);
+        const no_html = {
+            ALLOWED_TAGS: [], // No tags are allowed
+            ALLOWED_ATTR: [], // No attributes allowed
+            KEEP_CONTENT: true // Keep text content but remove all tags
+          }
+        jsonO.content = DOMPurify.sanitize(jsonO.content, {
+            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'code'],
+            ALLOWED_ATTR: ['href', 'title']
+          });
+        jsonO.username = DOMPurify.sanitize(jsonO.username, no_html);
+        jsonO.email = DOMPurify.sanitize(jsonO.email, no_html);
+        jsonO.website = DOMPurify.sanitize(jsonO.website, no_html);
+
+        jsonO.ip = ip;
+        jsonO.ua = req.get('User-Agent');
+        const {ok, errors} = validateComment(jsonO);
+        if (!ok) {
+            throw new Error('Invaild comment: ' + errors.join(', '));
+        }
         const { data, error } = await supabase
             .from('Comment')
             .insert([jsonO])
@@ -17,7 +84,6 @@ exports.createComment = async (req, res) => {
       }
       res.status(201).json(data[0]);
     } catch (err) {
-        console.error('Error creating comment:', err);
         res.status(500).json({ message: err.message });
     }
 }

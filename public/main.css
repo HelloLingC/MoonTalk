@@ -80,6 +80,12 @@
   color: #666;
 }
 
+.moontalk-error {
+  color: #ff0000;
+  text-align: center;
+  padding: 20px;
+}
+
 .moontalk-pagination {
     display: flex;
     justify-content: center;

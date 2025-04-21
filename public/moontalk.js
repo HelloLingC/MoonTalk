@@ -56,7 +56,7 @@ class MoonTalk {
     async onSubmit(self) {
         self.el.querySelector('.moontalk-submit').disabled = true;
         self.el.querySelector('.moontalk-submit').innerText = 'Submitting...';
-        const resp = await fetch(self.conf.server + "/comments/create", {
+        fetch(self.conf.server + "/comments/create", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -68,6 +68,17 @@ class MoonTalk {
                 email: self.el.querySelector('.moontalk-email').value,
                 website: self.el.querySelector('.moontalk-website').value,
             }),
+        }).then(resp => {
+            if (!resp.ok) {
+                return resp.json().then(errorData => {
+                    throw new Error(errorData.message || 'Request failed');
+                  });
+            }
+        }).catch(err => {
+            this.showError(err);
+        }).finally(() => {
+            this.el.querySelector('.moontalk-submit').disabled = false;
+            this.el.querySelector('.moontalk-submit').innerText = 'Submit';
         })
     }
 
@@ -101,6 +112,11 @@ class MoonTalk {
 
     showLoading(show) {
         document.querySelector('.moontalk-loading').style.display = show ? 'block' : 'none';
+    }
+
+    showError(error) {
+        document.querySelector('.moontalk-error').style.display = 'block';
+        document.querySelector('.moontalk-error').textContent = error;
     }
 
     renderComments(comments) {
