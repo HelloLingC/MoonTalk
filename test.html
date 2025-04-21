@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <h1>MoonTalk Test Page</h1>
+    <p>
+        An old man is just an old man.  </br>
+        With wood, nails, and an axe,  </br>
+        Spring, summer, autumn, winter… year after year,</br>  
+        The old man’s life slips away;  </br>
+    </br>
+        The hunger and toil, like that of oxen and horses</br>
+        Seem never to have taught him how to express himself.  </br>
+        Sometimes you might see him smoking a dry pipe,  </br>
+        Silently lost in thought, facing the dark corner of the room.</br>
+    </br>
+        Is he feeling sorrow? But who  </br>
+        Could know? Perhaps this is the old man’s most peaceful moment—</br>
+        Watching the wisping blue smoke rise and drift away.</p>
+    <div id="container">
+    </div>
+    <script src="moontalk.js"></script>
+    <script>
+        new MoonTalk().init({
+            page_key: 'test',
+            server: 'http://127.0.0.1:3000',
+            element: '#container'
+        })
+    </script>
+</body>
+</html>
+</html>
