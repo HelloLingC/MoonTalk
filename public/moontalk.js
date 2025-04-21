@@ -66,6 +66,7 @@ class MoonTalk {
                 post_id: self.conf.page_key,
                 username: self.el.querySelector('.moontalk-name').value,
                 email: self.el.querySelector('.moontalk-email').value,
+                website: self.el.querySelector('.moontalk-website').value,
             }),
         })
     }
@@ -117,6 +118,7 @@ class MoonTalk {
             }
             const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
             const commentDate = new Date(comment.created_at).toLocaleString();
+            const webiste = comment.website ? `<span><a href="${comment.website}" target="_blank">visit his website</a></span>` : '';
 
             commentEl.innerHTML = `
                 <div class="moontalk-comment-header">
@@ -124,7 +126,7 @@ class MoonTalk {
                     <span class="moontalk-comment-username">${comment.username}</span>
                     <span class="moontalk-comment-date">${commentDate}</span>
                 </div>
-                <div class="moontalk-comment-content">${comment.content}</div>
+                <div class="moontalk-comment-content">${comment.content}</br>${webiste}</div>
             `;
             container.appendChild(commentEl);
         });
