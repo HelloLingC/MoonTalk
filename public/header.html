@@ -7,14 +7,19 @@
   
     <!-- Comment List -->
     <div class="moontalk-list">
-      <!-- Comments will be dynamically inserted here -->
       <div class="moontalk-empty">No comments yet. Be the first!</div>
+      <div class="moontalk-loading">Loading comments...</div>
     </div>
-  
+    <div class="moontalk-pagination">
+      <button class="moontalk-paginator-prev">&lt;</button>
+      <span class="moontalk-paginator-info">Page 1 of 1</span>
+      <button class="moontalk-paginator-next">&gt;</button>
+    </div>
+
     <!-- Comment Editor -->
     <div class="moontalk-editor">
       <div class="moontalk-editor-header">Post a Comment</div>
-      <textarea class="moontalk-input" placeholder="Leave your comment... ╰(°▽°)╯"></textarea>
+      <textarea class="moontalk-content" placeholder="Leave your comment... ╰(°▽°)╯"></textarea>
       <div class="moontalk-editor-footer">
         <div class="moontalk-user">
           <input type="text" class="moontalk-name" placeholder="Your name">

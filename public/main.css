@@ -45,7 +45,7 @@
     margin-bottom: 8px;
   }
   
-  .moontalk-avatar {
+  .moontalk-comment-avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -53,26 +53,99 @@
     background: #eee;
   }
   
-  .moontalk-author {
+  .moontalk-comment-username {
     font-weight: 600;
     margin-right: 8px;
   }
   
-  .moontalk-date {
+  .moontalk-comment-date {
     color: #999;
     font-size: 0.85rem;
   }
   
-  .moontalk-content {
+  .moontalk-comment-content {
     margin-left: 42px;
   }
   
   .moontalk-empty {
+    display: none;
     color: #999;
     text-align: center;
     padding: 30px 0;
   }
-  
+
+.moontalk-loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.moontalk-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: 20px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.moontalk-pagination button {
+  display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.moontalk-pagination button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.moontalk-pagination button:hover:not(.disabled) {
+  background-color: #f5f5f5;
+  border-color: #d0d0d0;
+}
+
+.moontalk-pagination button.active {
+  background-color: #4285f4;
+  color: white;
+  border-color: #4285f4;
+}
+
+.moontalk-pagination button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.moontalk-pagination button.ellipsis {
+  border: none;
+  background-color: transparent;
+  cursor: default;
+  width: 20px;
+}
+
   /* Editor */
   .moontalk-editor {
     background: #f9f9f9;
@@ -86,7 +159,7 @@
     margin-bottom: 12px;
   }
   
-  .moontalk-input {
+  .moontalk-content {
     width: 100%;
     min-height: 100px;
     padding: 10px;
@@ -96,6 +169,7 @@
     font-family: inherit;
     margin-bottom: 10px;
   }
+
   
   .moontalk-editor-footer {
     display: flex;
