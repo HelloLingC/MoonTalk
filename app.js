@@ -9,7 +9,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 const corsOptions = {
-    origin: process.env.host, // Allow only this origin
+    origin: ["https://comment.moonlab.top", process.env.host],
     methods: ['GET', 'POST'],
 };
 
