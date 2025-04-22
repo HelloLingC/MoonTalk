@@ -45,13 +45,13 @@ class MoonTalk {
             return resp.text();
         }).then(html => {
             this.el.innerHTML = html;
-            document.querySelector('.moontalk-submit').addEventListener('click', ()=> {
+            this.el.querySelector('.moontalk-submit').addEventListener('click', ()=> {
                 this.onSubmit(this);
             })
-            document.querySelector('.moontalk-paginator-prev').addEventListener('click', () => {
+            this.el.querySelector('.moontalk-paginator-prev').addEventListener('click', () => {
                 this.goToPreviousPage();
             })
-            document.querySelector('.moontalk-paginator-next').addEventListener('click', () => {
+            this.el.querySelector('.moontalk-paginator-next').addEventListener('click', () => {
                 this.goToNextPage();
             })
             this.el_ok = true;
@@ -62,17 +62,23 @@ class MoonTalk {
     async onSubmit(self) {
         self.el.querySelector('.moontalk-submit').disabled = true;
         self.el.querySelector('.moontalk-submit').innerText = 'Submitting...';
+        this.showError('');
+        let content = self.el.querySelector('.moontalk-content').value;
+        if(self.reply_to && content.startsWith(self.reply_to_username)) {
+            content = content.replace(self.reply_to_username, '');
+        }
         fetch(self.conf.server + "/comments/create", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                content: self.el.querySelector('.moontalk-content').value,
+                content: content,
                 post_id: self.conf.page_key,
                 username: self.el.querySelector('.moontalk-name').value,
                 email: self.el.querySelector('.moontalk-email').value,
                 website: self.el.querySelector('.moontalk-website').value,
+                reply_to: self.reply_to,
             }),
         }).then(resp => {
             if (!resp.ok) {
@@ -111,6 +117,7 @@ class MoonTalk {
             this.renderComments(data);
         } catch (err) {
             console.error(err);
+            showError(err);
         } finally {
             this.showLoading(false);
         }
@@ -121,6 +128,10 @@ class MoonTalk {
     }
 
     showError(error) {
+        if(!error) {
+            document.querySelector('.moontalk-error').style.display = 'none';
+            return;
+        }
         document.querySelector('.moontalk-error').style.display = 'block';
         document.querySelector('.moontalk-error').textContent = error;
     }
@@ -131,6 +142,7 @@ class MoonTalk {
         comments.forEach(comment => {
             const commentEl = document.createElement('div');
             commentEl.classList.add('moontalk-comment');
+            commentEl.id = `moontalk-comment-${comment.id}`
 
             let hash;
             if(comment.email) {
@@ -148,12 +160,24 @@ class MoonTalk {
                     <span class="moontalk-comment-username">${webiste}</span>
                     <span class="moontalk-comment-date">${commentDate}</span>
                 </div>
-                <div class="moontalk-comment-content">${comment.content}
-                    <div><button>reply</button></div>
+                <div class="moontalk-comment-content">
+                    <span>Reply to @Lin</span>
+                ${comment.content}
+                    <div><button class="moontalk-comment-reply">reply</button></div>
                 </div>
             `;
             container.appendChild(commentEl);
         });
+        // Reply to a comment
+        document.addEventListener('click', (e) => {
+            if(e.target.classList.contains('moontalk-comment-reply')) {
+                const commentId = e.target.parentNode.parentNode.parentNode.id.split('-')[2];
+                this.el.querySelector('.moontalk-editor').scrollIntoView({ behavior: 'smooth' });
+                this.reply_to = commentId;
+                this.reply_to_username = `@${document.querySelector(`#moontalk-comment-${commentId} .moontalk-comment-username`).textContent} `
+                this.el.querySelector('.moontalk-content').value = this.reply_to_username;
+            }
+        })
     }
 
     updatePaginationUI() {

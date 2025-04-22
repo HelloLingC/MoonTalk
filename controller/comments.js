@@ -46,6 +46,16 @@ function validateComment(c) {
     } else {
         errors.push('Comment content is required');
     }
+    if(c.reply_to && !Number.isInteger(c.reply_to)) {
+        errors.push('Invalid reply_to');
+    }
+    if(c.post_id) {
+        if (c.post_id.length > 1000) {
+            errors.push('post_id too large');
+        }
+    } else {
+        errors.push('Post ID is required');
+    }
     return { ok: errors.length == 0, errors };
 }
 
@@ -144,11 +154,11 @@ exports.getAllComments = async (req, res) => {
         .order('created_at', { ascending: false })
         .range(skip, skip + limit);
 
-        if (parentId) {
-            query = query.eq('reply_to', parentId);
-        } else {
-            query = query.is('reply_to', null);
-        }
+        // if (parentId) {
+        //     query = query.eq('reply_to', parentId);
+        // } else {
+        //     query = query.is('reply_to', null);
+        // }
 
         const { data, error } = await query;
         if (error) throw error;

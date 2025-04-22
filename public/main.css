@@ -169,6 +169,43 @@
   .moontalk-comment-content {
     margin-left: 42px;
   }
+
+.moontalk-comment-reply {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  margin: 4px 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568; /* slate-700 */
+  background-color: #f7fafc; /* slate-50 */
+  border: 1px solid #e2e8f0; /* slate-200 */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.moontalk-comment-reply::before {
+  content: "↩";
+  margin-right: 6px;
+  font-size: 0.9em;
+}
+
+.moontalk-comment-reply:hover {
+  background-color: #edf2f7; /* slate-100 */
+  border-color: #cbd5e0; /* slate-300 */
+  color: #2d3748; /* slate-800 */
+}
+
+.moontalk-comment-reply:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3); /* blue-300 with opacity */
+}
+
+.moontalk-comment-reply:active {
+  transform: translateY(1px);
+}
   
   .moontalk-empty {
     display: none;
@@ -184,6 +221,7 @@
 }
 
 .moontalk-error {
+  display: none;
   color: #ff0000;
   text-align: center;
   padding: 20px;
