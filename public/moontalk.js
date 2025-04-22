@@ -166,19 +166,21 @@ class MoonTalk {
                 })
             }
 
-            let hash;
-            if(comment.email) {
-                hash = md5(comment.email.trim().toLowerCase());
-            } else {
-                hash = md5(comment.username.trim().toLowerCase());
-            }
-            const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+            // Gravatar is great, but not great enough in some regions
+            // let hash;
+            // if(comment.email) {
+            //     hash = md5(comment.email.trim().toLowerCase());
+            // } else {
+            //     hash = md5(comment.username.trim().toLowerCase());
+            // }
+            // const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+            const avatarUrl = `https://api.dicebear.com/9.x/glass/svg?seed=${comment.username}&size=40`
             const commentDate = new Date(comment.created_at).toLocaleString();
             const webiste = comment.website ? `<a href="${comment.website}" target="_blank">${comment.username}</a>` : comment.username;
 
             commentEl.innerHTML = `
                 <div class="moontalk-comment-header">
-                    <img class="moontalk-comment-avatar" src="${gravatarUrl}" alt="Avatar">
+                    <img class="moontalk-comment-avatar" src="${avatarUrl}" alt="Avatar">
                     <span class="moontalk-comment-username">${webiste}</span>
                     <span class="moontalk-comment-date">${commentDate}</span>
                 </div>
