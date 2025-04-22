@@ -30,6 +30,9 @@ commentRouter.get('/num', async (req, res) => {
 commentRouter.get('/list', async (req, res) => {
     await comment.getAllComments(req, res);
 })
+commentRouter.get('/haschildren/:id', async (req, res) => {
+    await comment.hasChildren(req, res);
+})
 app.use('/comments', commentRouter);
 
 app.listen(3000, () => console.log("Server ready on port 3000."));

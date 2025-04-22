@@ -206,7 +206,43 @@
 .moontalk-comment-reply:active {
   transform: translateY(1px);
 }
-  
+
+.moontalk-subcomments {
+  margin-left: 42px; /* Align with comment content */
+  padding-left: 16px;
+  border-left: 2px solid #e2e8f0; /* Vertical line to indicate nesting */
+  margin-top: 12px;
+}
+
+.moontalk-subcomments .moontalk-comment-header {
+  margin-bottom: 6px; /* Slightly less space than main comment */
+}
+
+.moontalk-subcomments .moontalk-comment-avatar {
+  width: 28px;
+  height: 28px; /* Slightly smaller than main comment */
+}
+
+.moontalk-subcomments .moontalk-comment-username {
+  font-weight: 500; /* Slightly lighter than main comment */
+  font-size: 0.95rem;
+}
+
+.moontalk-subcomments .moontalk-comment-date {
+  font-size: 0.8rem; /* Slightly smaller than main comment */
+}
+
+.moontalk-subcomments .moontalk-comment-content {
+  margin-left: 38px; /* Adjusted for smaller avatar */
+  font-size: 0.95rem;
+  color: #4a5568; /* Slightly lighter text color */
+}
+
+.moontalk-subcomments .moontalk-comment-reply {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
+
   .moontalk-empty {
     display: none;
     color: #999;
@@ -289,7 +325,142 @@ button[disabled] {
   width: 20px;
 }
 
-  /* Editor */
+/* Loading status styles */
+.moontalk-loading-container {
+  margin: 15px 0 0 42px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Loading spinner wrapper */
+.moontalk-loading-spinner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+/* Spinner SVG element */
+.moontalk-spinner {
+  width: 20px;
+  height: 20px;
+  animation: rotate 1.4s linear infinite;
+}
+
+/* Spinner circle path */
+.moontalk-spinner-path {
+  stroke: #3b82f6;
+  stroke-linecap: round;
+  animation: dash 1.4s ease-in-out infinite;
+}
+
+/* Loading text */
+.moontalk-loading-text {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(270deg); }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Error message styles */
+
+.moontalk-error {
+  margin: 15px 0 0 42px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.moontalk-error-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fef2f2; /* red-50 */
+  border: 1px solid #fecaca; /* red-200 */
+  border-radius: 6px;
+  color: #991b1b; /* red-800 */
+  font-size: 0.9rem;
+}
+
+.error-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  color: #ef4444; /* red-500 */
+}
+
+/* Optional: Add a shake animation for more emphasis */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+.error-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Success message styles */
+.moontalk-comment-success {
+  margin: 15px 0 0 42px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.success-message {
+  display: none;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f0fdf4; /* green-50 */
+  border: 1px solid #bbf7d0; /* green-200 */
+  border-radius: 6px;
+  color: #166534; /* green-800 */
+  font-size: 0.9rem;
+}
+
+.success-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  color: #22c55e; /* green-500 */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Editor */
   .moontalk-editor {
     background: #f9f9f9;
     border-radius: 8px;

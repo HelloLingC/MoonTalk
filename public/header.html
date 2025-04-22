@@ -1,13 +1,17 @@
 <div class="moontalk">
   <div class="moontalk-vote">
-    <h3 class="vote-title">Rate this post</h3>
+    <h3 class="vote-title">Vote this post</h3>
     <div class="vote-buttons">
       <button class="vote-btn upvote" aria-label="Upvote">
-        <span class="vote-icon">⇧</span>
+        <span class="vote-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+        </span>
         <span class="vote-count">0</span>
       </button>
       <button class="vote-btn downvote" aria-label="Downvote">
-        <span class="vote-icon">⇩</span>
+        <span class="vote-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
         <span class="vote-count">0</span>
       </button>
     </div>
@@ -27,8 +31,30 @@
     <!-- Comment List Status -->
     <div>
       <div class="moontalk-empty">No comments yet. Be the first!</div>
-      <div class="moontalk-loading">Loading comments...</div>
-      <div class="moontalk-error"></div>
+      <div class="moontalk-loading">
+        <div class="moontalk-loading-spinner">
+          <svg class="moontalk-spinner" viewBox="0 0 50 50">
+            <circle class="moontalk-spinner-path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+          </svg>
+          <span class="moontalk-loading-text">Loading comments...</span>
+        </div>
+      </div>
+      <div class="moontalk-error">
+        <div class="moontalk-error-wrapper">
+          <svg class="error-icon" ssssviewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+          <span class="moontalk-error-message"></span>
+        </div>
+      </div>
+      <div class="moontalk-comment-success">
+        <div class="success-message">
+          <svg class="success-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          <span>Your comment has been posted successfully!</span>
+        </div>
+      </div>
     </div>
 
     <div class="moontalk-pagination">

@@ -86,6 +86,7 @@ class MoonTalk {
                     throw new Error(errorData.message || 'Request failed');
                   });
             }
+            this.onSucess();
         }).catch(err => {
             this.showError(err);
         }).finally(() => {
@@ -123,6 +124,16 @@ class MoonTalk {
         }
     }
 
+    onSucess() {
+        const successMsg = this.el.querySelector('.moontalk-comment-success');
+        successMsg.style.display = 'flex';
+
+        // Hide after 3 seconds
+        setTimeout(() => {
+            successMsg.style.display = 'none';
+        }, 3000);
+    }
+
     showLoading(show) {
         document.querySelector('.moontalk-loading').style.display = show ? 'block' : 'none';
     }
@@ -133,7 +144,7 @@ class MoonTalk {
             return;
         }
         document.querySelector('.moontalk-error').style.display = 'block';
-        document.querySelector('.moontalk-error').textContent = error;
+        document.querySelector('.moontalk-error-message').textContent = error;
     }
 
     renderComments(comments) {
@@ -143,6 +154,17 @@ class MoonTalk {
             const commentEl = document.createElement('div');
             commentEl.classList.add('moontalk-comment');
             commentEl.id = `moontalk-comment-${comment.id}`
+            if(comment.hasChildren) {
+                fetch(`${this.conf.server}/comments/list?postId=${this.conf.page_key}&parentId=${comment.id}`)
+                .then(resp => {
+                    if (!resp.ok) {
+                        throw new Error(`HTTP error when fetching children comments: ${resp.status}`);
+                    }
+                    return resp.json();
+                }).then(data => {
+                    this.renderChildrenComments(commentEl, data);
+                })
+            }
 
             let hash;
             if(comment.email) {
@@ -161,7 +183,6 @@ class MoonTalk {
                     <span class="moontalk-comment-date">${commentDate}</span>
                 </div>
                 <div class="moontalk-comment-content">
-                    <span>Reply to @Lin</span>
                 ${comment.content}
                     <div><button class="moontalk-comment-reply">reply</button></div>
                 </div>
@@ -178,6 +199,38 @@ class MoonTalk {
                 this.el.querySelector('.moontalk-content').value = this.reply_to_username;
             }
         })
+    }
+
+    renderChildrenComments(parent, comments) {
+        comments.forEach(comment => {
+            console.log(comment)
+            const subComment = document.createElement('div');
+            subComment.classList.add('moontalk-subcomments');
+
+            let hash;
+            if(comment.email) {
+                hash = md5(comment.email.trim().toLowerCase());
+            } else {
+                hash = md5(comment.username.trim().toLowerCase());
+            }
+            const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+            const commentDate = new Date(comment.created_at).toLocaleString();
+            const webiste = comment.website ? `<a href="${comment.website}" target="_blank">${comment.username}</a>` : comment.username;
+
+            subComment.innerHTML = `
+                <div class="moontalk-comment-header">
+                    <img class="moontalk-comment-avatar" src="${gravatarUrl}" alt="Avatar">
+                    <span class="moontalk-comment-username">${webiste}</span>
+                    <span class="moontalk-comment-date">${commentDate}</span>
+                </div>
+                <div class="moontalk-comment-content">
+                    <span>Reply to @Lin</span>
+                ${comment.content}
+                    <div><button class="moontalk-comment-reply">reply</button></div>
+                </div>
+            `;
+            parent.appendChild(subComment);
+        });
     }
 
     updatePaginationUI() {

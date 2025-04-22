@@ -46,7 +46,8 @@ function validateComment(c) {
     } else {
         errors.push('Comment content is required');
     }
-    if(c.reply_to && !Number.isInteger(c.reply_to)) {
+    if(c.reply_to && isNaN(c.reply_to)) {
+        console.log(c.reply_to)
         errors.push('Invalid reply_to');
     }
     if(c.post_id) {
@@ -154,11 +155,11 @@ exports.getAllComments = async (req, res) => {
         .order('created_at', { ascending: false })
         .range(skip, skip + limit);
 
-        // if (parentId) {
-        //     query = query.eq('reply_to', parentId);
-        // } else {
-        //     query = query.is('reply_to', null);
-        // }
+        if (parentId) {
+            query = query.eq('reply_to', parentId);
+        } else {
+            query = query.is('reply_to', null);
+        }
 
         const { data, error } = await query;
         if (error) throw error;
@@ -166,9 +167,44 @@ exports.getAllComments = async (req, res) => {
             res.status(200).json({ message: 'No comments found' });
             return;
         }
-        res.json(data);
+
+        const commentsWithChildren = await Promise.all(
+            data.map(async comment => {
+                const { data: hasChildren } = await supabase
+                    .rpc('comment_has_children', { comment_id: comment.id });
+                return {
+                    ...comment,
+                    hasChildren
+                };
+            })
+        );
+        res.json(commentsWithChildren);
     } catch (err) {
         console.error('Error querying comments:', err);
         res.status(500).json({ message: err.message });
     }
   };
+
+/**
+ * whether a comment has children comment (reply_to)
+ * rely on supabase's database functions
+ * SELECT EXISTS (SELECT 1 FROM comments WHERE parent_id = comment_id);
+$$ LANGUAGE sql;
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.hasChildren = async (req, res) => {
+    try {
+        // /comments/haschildren/:id or ?id=123
+        const id = req.params.id || req.query.id;
+        if(!id) throw new Error('Comment ID is required');
+
+        const { data, error } = await supabase
+        .rpc('comment_has_children', { comment_id: id});
+        if(error) throw error;
+        res.json(data); // return bool value
+    } catch (err) {
+        console.error('Error querying comments:', err);
+        res.status(500).json({ message: err.message });
+    }
+}
