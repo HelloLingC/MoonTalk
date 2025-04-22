@@ -48,6 +48,12 @@ class MoonTalk {
             document.querySelector('.moontalk-submit').addEventListener('click', ()=> {
                 this.onSubmit(this);
             })
+            document.querySelector('.moontalk-paginator-prev').addEventListener('click', () => {
+                this.goToPreviousPage();
+            })
+            document.querySelector('.moontalk-paginator-next').addEventListener('click', () => {
+                this.goToNextPage();
+            })
             this.el_ok = true;
             this.loadComments();
         })
@@ -134,15 +140,17 @@ class MoonTalk {
             }
             const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
             const commentDate = new Date(comment.created_at).toLocaleString();
-            const webiste = comment.website ? `<span><a href="${comment.website}" target="_blank">visit his website</a></span>` : '';
+            const webiste = comment.website ? `<a href="${comment.website}" target="_blank">${comment.username}</a>` : comment.username;
 
             commentEl.innerHTML = `
                 <div class="moontalk-comment-header">
                     <img class="moontalk-comment-avatar" src="${gravatarUrl}" alt="Avatar">
-                    <span class="moontalk-comment-username">${comment.username}</span>
+                    <span class="moontalk-comment-username">${webiste}</span>
                     <span class="moontalk-comment-date">${commentDate}</span>
                 </div>
-                <div class="moontalk-comment-content">${comment.content}</br>${webiste}</div>
+                <div class="moontalk-comment-content">${comment.content}
+                    <div><button>reply</button></div>
+                </div>
             `;
             container.appendChild(commentEl);
         });
@@ -155,16 +163,18 @@ class MoonTalk {
     }
 
     goToPreviousPage() {
-        if (currentPage > 1) {
-          currentPage--;
+        if (this.currentPage > 1) {
+          this.currentPage--;
           this.loadComments();
+          this.updatePaginationUI();
         }
     }
 
     goToNextPage() {
-        if (currentPage < totalPages) {
-          currentPage++;
+        if (this.currentPage < this.totalPages) {
+          this.currentPage++;
           this.loadComments();
+          this.updatePaginationUI();
         }
     }
 

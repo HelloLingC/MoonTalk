@@ -10,7 +10,7 @@ function validateComment(c) {
     const errors = [];
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-    if (c.usernname) {
+    if (c.username) {
         if(c.username.length < 3) {
             errors.push('Username must be at least 3 characters long');
         }
@@ -88,6 +88,23 @@ exports.createComment = async (req, res) => {
     }
 }
 
+
+exports.getPostVotes = async (req, res) => {
+    try {
+        const postId = req.query.postId;
+        const { data, error } = await supabase
+            .from('Vote')
+            .select('value')
+            .eq('post_id', postId);
+        if (error) throw error;
+        res.json(data);
+    } catch (err) {
+        console.error('Error querying votes:', err);
+        res.status(500).json({ message: err.message });
+    }
+}
+
+
 /**
  * Get total comments number of a post
  * used for pagination
@@ -102,6 +119,8 @@ exports.getCommentsNumber = async (req, res) => {
         const { data, error, count } = await supabase.from('Comment')
         .select('*', { count: 'exact', head: true })
         .eq('post_id', postId)
+        .eq('status', 'published')
+
         if (error) throw error;
         res.json({ count: count, totalPages: Math.ceil(count / page_size) });
     } catch(err) {
