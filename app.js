@@ -8,12 +8,11 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const corsOptions = {
-    origin: ["https://comment.moonlab.top", process.env.host],
-    methods: ['GET', 'POST'],
-};
-
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://moonlab.top', 'https://comment.moonlab.top');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 app.use(express.json());
 
 app.get("/", (req, res) => {
