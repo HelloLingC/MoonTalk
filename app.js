@@ -9,17 +9,15 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 const corsOptions = {
-    origin: 'http://localhost:3000', // Allow only this origin
+    origin: process.env.host, // Allow only this origin
     methods: ['GET', 'POST'],
 };
 
-app.use(cors({
-    origin: '*'
-  }));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, 'test.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const commentRouter = express.Router();
