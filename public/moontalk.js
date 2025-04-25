@@ -26,6 +26,7 @@ class MoonTalk {
         }
 
         this.initEl();
+        this.loadStyles();
         // this.loadComments();
     }
 
@@ -57,6 +58,15 @@ class MoonTalk {
             this.el_ok = true;
             this.loadComments();
         })
+    }
+
+    loadStyles() {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://comment.moonlab.top/main.css';
+        // link.onload = resolve;
+        // link.onerror = reject;
+        document.head.appendChild(link); // Insert to <head>
     }
 
     async onSubmit(self) {
@@ -247,17 +257,6 @@ class MoonTalk {
           this.loadComments();
           this.updatePaginationUI();
         }
-    }
-
-    loadStyles() {
-        return new Promise((resolve, reject) => {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = 'https://.css';
-            link.onload = resolve;
-            link.onerror = reject;
-            document.head.appendChild(link); // Insert to <head>
-          });
     }
 
     getDefaultOptions() {
