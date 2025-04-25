@@ -87,9 +87,7 @@ class MoonTalk {
                     throw new Error(errorData.message || 'Request failed');
                   });
             }
-            this.onSucess();
-        }).catch(err => {
-            this.showError(err);
+            this.onSuccess();
         }).finally(() => {
             this.el.querySelector('.moontalk-submit').disabled = false;
             this.el.querySelector('.moontalk-submit').innerText = 'Submit';
@@ -125,9 +123,10 @@ class MoonTalk {
         }
     }
 
-    onSucess() {
-        const successMsg = this.el.querySelector('.moontalk-comment-success');
-        successMsg.style.display = 'flex';
+    onSuccess() {
+        const successMsg = this.el.querySelector('.moontalk-success');
+        console.log(successMsg);
+        successMsg.style.display = 'block';
 
         // Hide after 3 seconds
         setTimeout(() => {
@@ -215,10 +214,10 @@ class MoonTalk {
 
                 if(outerEl.classList.contains('moontalk-subcomment')) {
                     // Replying to a subcomment, find the parent comment
-                    this.parentId = outerEl.parentNode.id.split('-')[2];
+                    this.parent_id = outerEl.parentNode.id.split('-')[2];
                     this.reply_to = commentId; // Set the reply_to to the current comment id
                 } else {
-                    this.parentId = commentId;
+                    this.parent_id = commentId;
                 }
                 this.el.querySelector('.moontalk-editor').scrollIntoView({ behavior: 'smooth' });
                 this.reply_to_username = `@${document.querySelector(`#moontalk-comment-${commentId} .moontalk-comment-username`).textContent} `

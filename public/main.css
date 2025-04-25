@@ -426,13 +426,13 @@ button[disabled] {
 }
 
 /* Success message styles */
-.moontalk-comment-success {
+.moontalk-success {
+  display: none;
   margin: 15px 0 0 42px;
   animation: fadeIn 0.3s ease-in-out;
 }
 
 .success-message {
-  display: none;
   align-items: center;
   padding: 10px 15px;
   background-color: #f0fdf4; /* green-50 */
