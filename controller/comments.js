@@ -121,23 +121,38 @@ exports.getPostVotes = async (req, res) => {
  * used for pagination
  */
 exports.getCommentsNumber = async (req, res) => {
-    try{
-        const postId = req.query.postId;
-        if (!postId) {
-            res.status(400).send('Post ID is required');
-            return;
-        }
-        const { data, error, count } = await supabase.from('Comment')
-        .select('*', { count: 'exact', head: true })
-        .eq('post_id', postId)
-        .eq('status', 'published')
-
-        if (error) throw error;
-        res.json({ count: count, totalPages: Math.ceil(count / page_size) });
-    } catch(err) {
-        console.error('Error querying comments:', err);
-        res.status(500).json({ message: err.message });
+    const postId = req.query.postId;
+    if(!postId) {
+        res.status(500).json({ message: 'Post ID is required' });
+        return;
     }
+    const [
+        { count: totalCount, error: countError },
+        { count: parentCount, error: parentCountError }
+    ] = await Promise.all([
+        supabase
+            .from('Comment')
+            .select('id', { count: 'exact', head: true })
+            .eq('post_id', postId)
+            .eq('status', 'published'),
+        supabase
+            .from('Comment')
+            .select('id', { count: 'exact', head: true })
+            .eq('post_id', postId)
+            .eq('status', 'published')
+            .is('parent_id', null)
+    ]);
+
+    if (countError || parentCountError) {
+        res.status(500).json({ message: 'Cannot get comments number: ' +
+             JSON.stringify((countError || parentCountError))});
+        return;
+    }
+
+    res.status(200).json({
+        count: totalCount,
+        totalPages: Math.ceil(parentCount / page_size)
+    });
 }
 
 exports.getAllComments = async (req, res) => {

@@ -95,6 +95,7 @@ class MoonTalk {
     }
 
     async loadComments() {
+        this.showError('');
         this.showLoading(true);
         if(this.currentPage == 0) {
             const resp = await fetch(`${this.conf.server}/comments/num?postId=${this.conf.page_key}`)
@@ -117,7 +118,7 @@ class MoonTalk {
             this.renderRootComments(data);
         } catch (err) {
             console.error(err);
-            showError(err);
+            this.showError(err);
         } finally {
             this.showLoading(false);
         }

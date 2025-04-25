@@ -243,24 +243,17 @@
   font-size: 0.8rem;
 }
 
-  .moontalk-empty {
-    display: none;
-    color: #999;
-    text-align: center;
-    padding: 30px 0;
-  }
+.moontalk-empty {
+  display: none;
+  color: #999;
+  text-align: center;
+  padding: 30px 0;
+}
 
 .moontalk-loading {
   text-align: center;
   padding: 20px;
   color: #666;
-}
-
-.moontalk-error {
-  display: none;
-  color: #ff0000;
-  text-align: center;
-  padding: 20px;
 }
 
 .moontalk-pagination {
@@ -392,7 +385,7 @@ button[disabled] {
 /* Error message styles */
 
 .moontalk-error {
-  margin: 15px 0 0 42px;
+  margin: 15px 20px 0 20px;
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -428,7 +421,7 @@ button[disabled] {
 /* Success message styles */
 .moontalk-success {
   display: none;
-  margin: 15px 0 0 42px;
+  margin: 15px 20px 0 20px;
   animation: fadeIn 0.3s ease-in-out;
 }
 
