@@ -1,33 +1,31 @@
 {
     "version": 2,
     "builds": [
-     {
-      "src": "app.js",
-      "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] }
-     }
+      {
+        "src": "app.js",
+        "use": "@vercel/node",
+        "config": { "includeFiles": ["dist/**"] }
+      }
     ],
     "routes": [
-     {
-      "src": "/(.*)",
-      "dest": "app.js"
-     }
-    ], "headers": [
-        {
-        "source": "/(.*)",
-        "headers": [
-            {
-            "key": "Access-Control-Allow-Origin",
-            "value": "https://moonlab.top"
-            },
-            {
-            "key": "Access-Control-Allow-Methods",
-            "value": "GET,POST,PUT,DELETE,OPTIONS"
-            },
-            {
-            "key": "Access-Control-Allow-Headers",
-            "value": "Content-Type, Authorization"
-            }
-        ]
-    }]
-}
+      {
+        "src": "/(.*)",
+        "dest": "app.js",
+        "headers": {
+          "Access-Control-Allow-Origin": "https://moonlab.top",
+          "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        }
+      },
+      {
+        "src": "/(.*)",
+        "methods": ["OPTIONS"],
+        "headers": {
+          "Access-Control-Allow-Origin": "https://moonlab.top",
+          "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        },
+        "continue": true
+      }
+    ]
+  }
