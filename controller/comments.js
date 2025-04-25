@@ -156,15 +156,15 @@ exports.getAllComments = async (req, res) => {
         .range(skip, skip + limit);
 
         if (parentId) {
-            query = query.eq('reply_to', parentId);
+            query = query.eq('parent_id', parentId);
         } else {
-            query = query.is('reply_to', null);
+            query = query.is('parent_id', null);
         }
 
         const { data, error } = await query;
         if (error) throw error;
         if (data.length === 0) {
-            res.status(200).json({ message: 'No comments found' });
+            res.status(500).json({ message: 'No comments found' });
             return;
         }
 
@@ -184,6 +184,7 @@ exports.getAllComments = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
   };
+
 
 /**
  * whether a comment has children comment (reply_to)

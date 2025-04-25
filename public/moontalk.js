@@ -64,7 +64,7 @@ class MoonTalk {
         self.el.querySelector('.moontalk-submit').innerText = 'Submitting...';
         this.showError('');
         let content = self.el.querySelector('.moontalk-content').value;
-        if(self.reply_to && content.startsWith(self.reply_to_username)) {
+        if(self.parent_id && content.startsWith(self.reply_to_username)) {
             content = content.replace(self.reply_to_username, '');
         }
         fetch(self.conf.server + "/comments/create", {
@@ -78,6 +78,7 @@ class MoonTalk {
                 username: self.el.querySelector('.moontalk-name').value,
                 email: self.el.querySelector('.moontalk-email').value,
                 website: self.el.querySelector('.moontalk-website').value,
+                parent_id: self.parent_id,
                 reply_to: self.reply_to,
             }),
         }).then(resp => {
@@ -115,7 +116,7 @@ class MoonTalk {
                 throw new Error(`HTTP error - status: ${resp.status}`);
             }
             const data = await resp.json();
-            this.renderComments(data);
+            this.renderRootComments(data);
         } catch (err) {
             console.error(err);
             showError(err);
@@ -147,12 +148,20 @@ class MoonTalk {
         document.querySelector('.moontalk-error-message').textContent = error;
     }
 
-    renderComments(comments) {
+    renderRootComments(comments) {
         const container = document.querySelector('.moontalk-list');
         container.innerHTML = '';
+        this.renderComments(comments, container, "moontalk-comment");
+    }
+
+    renderChildrenComments(comments, parentEl) {
+        this.renderComments(comments, parentEl, "moontalk-subcomment");
+    }
+
+    renderComments(comments, container, classname) {
         comments.forEach(comment => {
             const commentEl = document.createElement('div');
-            commentEl.classList.add('moontalk-comment');
+            commentEl.classList.add(classname);
             commentEl.id = `moontalk-comment-${comment.id}`
             if(comment.hasChildren) {
                 fetch(`${this.conf.server}/comments/list?postId=${this.conf.page_key}&parentId=${comment.id}`)
@@ -162,7 +171,7 @@ class MoonTalk {
                     }
                     return resp.json();
                 }).then(data => {
-                    this.renderChildrenComments(commentEl, data);
+                    this.renderChildrenComments(data, commentEl);
                 })
             }
 
@@ -176,6 +185,12 @@ class MoonTalk {
             // const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon`;
             const avatarUrl = `https://api.dicebear.com/9.x/glass/svg?seed=${comment.username}&size=40`
             const commentDate = new Date(comment.created_at).toLocaleString();
+            if(comment.reply_to) {
+                const replyToComment = comments.find(element => element.id == comment.reply_to);
+                if (replyToComment) {
+                    comment.content = `<strong>@${replyToComment.username}</strong> ${comment.content}`;
+                }
+            }
             const webiste = comment.website ? `<a href="${comment.website}" target="_blank">${comment.username}</a>` : comment.username;
 
             commentEl.innerHTML = `
@@ -194,39 +209,22 @@ class MoonTalk {
         // Reply to a comment
         document.addEventListener('click', (e) => {
             if(e.target.classList.contains('moontalk-comment-reply')) {
-                const commentId = e.target.parentNode.parentNode.parentNode.id.split('-')[2];
+                const outerEl =  e.target.parentNode.parentNode.parentNode;
+                // Current replyed comment id
+                const commentId = outerEl.id.split('-')[2];
+
+                if(outerEl.classList.contains('moontalk-subcomment')) {
+                    // Replying to a subcomment, find the parent comment
+                    this.parentId = outerEl.parentNode.id.split('-')[2];
+                    this.reply_to = commentId; // Set the reply_to to the current comment id
+                } else {
+                    this.parentId = commentId;
+                }
                 this.el.querySelector('.moontalk-editor').scrollIntoView({ behavior: 'smooth' });
-                this.reply_to = commentId;
                 this.reply_to_username = `@${document.querySelector(`#moontalk-comment-${commentId} .moontalk-comment-username`).textContent} `
                 this.el.querySelector('.moontalk-content').value = this.reply_to_username;
             }
         })
-    }
-
-    renderChildrenComments(parent, comments) {
-        comments.forEach(comment => {
-            console.log(comment)
-            const subComment = document.createElement('div');
-            subComment.classList.add('moontalk-subcomments');
-
-
-            const commentDate = new Date(comment.created_at).toLocaleString();
-            const webiste = comment.website ? `<a href="${comment.website}" target="_blank">${comment.username}</a>` : comment.username;
-
-            subComment.innerHTML = `
-                <div class="moontalk-comment-header">
-                    <img class="moontalk-comment-avatar" src="" alt="Avatar">
-                    <span class="moontalk-comment-username">${webiste}</span>
-                    <span class="moontalk-comment-date">${commentDate}</span>
-                </div>
-                <div class="moontalk-comment-content">
-                    <span>Reply to @Lin</span>
-                ${comment.content}
-                    <div><button class="moontalk-comment-reply">reply</button></div>
-                </div>
-            `;
-            parent.appendChild(subComment);
-        });
     }
 
     updatePaginationUI() {

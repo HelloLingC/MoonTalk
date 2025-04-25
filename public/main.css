@@ -207,38 +207,38 @@
   transform: translateY(1px);
 }
 
-.moontalk-subcomments {
+.moontalk-subcomment {
   margin-left: 42px; /* Align with comment content */
   padding-left: 16px;
   border-left: 2px solid #e2e8f0; /* Vertical line to indicate nesting */
-  margin-top: 12px;
+  padding-top: 12px;
 }
 
-.moontalk-subcomments .moontalk-comment-header {
+.moontalk-subcomment .moontalk-comment-header {
   margin-bottom: 6px; /* Slightly less space than main comment */
 }
 
-.moontalk-subcomments .moontalk-comment-avatar {
+.moontalk-subcomment .moontalk-comment-avatar {
   width: 28px;
   height: 28px; /* Slightly smaller than main comment */
 }
 
-.moontalk-subcomments .moontalk-comment-username {
+.moontalk-subcomment .moontalk-comment-username {
   font-weight: 500; /* Slightly lighter than main comment */
   font-size: 0.95rem;
 }
 
-.moontalk-subcomments .moontalk-comment-date {
+.moontalk-subcomment .moontalk-comment-date {
   font-size: 0.8rem; /* Slightly smaller than main comment */
 }
 
-.moontalk-subcomments .moontalk-comment-content {
+.moontalk-subcomment .moontalk-comment-content {
   margin-left: 38px; /* Adjusted for smaller avatar */
   font-size: 0.95rem;
   color: #4a5568; /* Slightly lighter text color */
 }
 
-.moontalk-subcomments .moontalk-comment-reply {
+.moontalk-subcomment .moontalk-comment-reply {
   padding: 4px 10px;
   font-size: 0.8rem;
 }
