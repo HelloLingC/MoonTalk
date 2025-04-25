@@ -125,6 +125,10 @@ class MoonTalk {
                 throw new Error(`HTTP error - status: ${resp.status}`);
             }
             const data = await resp.json();
+            if(data.message) {
+                document.querySelector('.moontalk-empty').style.display = 'block';
+                return;
+            }
             this.renderRootComments(data);
         } catch (err) {
             console.error(err);

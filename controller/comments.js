@@ -149,9 +149,12 @@ exports.getCommentsNumber = async (req, res) => {
         return;
     }
 
+    const totalPages = Math.ceil(parentCount / page_size)
+    if(totalPages == 0) totalPages = 1;
+
     res.status(200).json({
         count: totalCount,
-        totalPages: Math.ceil(parentCount / page_size)
+        totalPages: totalPages,
     });
 }
 
@@ -179,7 +182,7 @@ exports.getAllComments = async (req, res) => {
         const { data, error } = await query;
         if (error) throw error;
         if (data.length === 0) {
-            res.status(500).json({ message: 'No comments found' });
+            res.status(200).json({ message: 'No comments found' });
             return;
         }
 
