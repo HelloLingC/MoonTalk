@@ -98,6 +98,8 @@ class MoonTalk {
                   });
             }
             this.onSuccess();
+        }).catch(error => {
+            this.showError(error);
         }).finally(() => {
             this.el.querySelector('.moontalk-submit').disabled = false;
             this.el.querySelector('.moontalk-submit').innerText = 'Submit';
@@ -109,13 +111,15 @@ class MoonTalk {
         this.showLoading(true);
         if(this.currentPage == 0) {
             const resp = await fetch(`${this.conf.server}/comments/num?postId=${this.conf.page_key}`)
-            if (!resp.ok) {
-                throw new Error(`HTTP error - status: ${resp.status}`);
-            }
             const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(`HTTP error - status: ${resp.status} ${data}`);
+            }
             this.totalPages = data.totalPages;
+            if(this.totalPages !== 0) {
+                this.currentPage++;
+            }
             document.querySelector('.moontalk-count').textContent = data.count;
-            this.currentPage++;
             this.updatePaginationUI();
         }
 

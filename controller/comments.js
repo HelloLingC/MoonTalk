@@ -149,12 +149,9 @@ exports.getCommentsNumber = async (req, res) => {
         return;
     }
 
-    const totalPages = Math.ceil(parentCount / page_size)
-    if(totalPages == 0) totalPages = 1;
-
     res.status(200).json({
         count: totalCount,
-        totalPages: totalPages,
+        totalPages: Math.ceil(parentCount / page_size),
     });
 }
 
