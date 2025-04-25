@@ -10,21 +10,24 @@
     "routes": [
      {
       "src": "/(.*)",
-      "dest": "app.js",
-      "headers": [
-            {
-              "key": "Access-Control-Allow-Origin",
-              "value": "https://moonlab.top"
-            },
-            {
-              "key": "Access-Control-Allow-Methods",
-              "value": "GET,POST,PUT,DELETE,OPTIONS"
-            },
-            {
-              "key": "Access-Control-Allow-Headers",
-              "value": "Content-Type, Authorization"
-            }
-      ]
+      "dest": "app.js"
      }
-    ]
-   }
+    ], "headers": [
+        {
+        "source": "/(.*)",
+        "headers": [
+            {
+            "key": "Access-Control-Allow-Origin",
+            "value": "https://moonlab.top"
+            },
+            {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET,POST,PUT,DELETE,OPTIONS"
+            },
+            {
+            "key": "Access-Control-Allow-Headers",
+            "value": "Content-Type, Authorization"
+            }
+        ]
+    }]
+}

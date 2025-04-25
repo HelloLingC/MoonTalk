@@ -62,7 +62,7 @@ function validateComment(c) {
 
 exports.createComment = async (req, res) => {
     try {
-        const ip = req.ip;
+        const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
         const jsonO = req.body;
 
         const window = new JSDOM('').window;
