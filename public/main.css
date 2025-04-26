@@ -481,40 +481,60 @@ button[disabled] {
     margin-bottom: 10px;
   }
 
-  
+.moontalk-editor-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px; /* Adds space between items when they wrap */
+}
+
+.moontalk-user input {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 200px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.moontalk-submit {
+  background: #1e5de5;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.moontalk-submit:hover {
+  background: #1976d2;
+}
+
+.moontalk-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
   .moontalk-editor-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; /* Stack items vertically on small screens */
+    align-items: stretch; /* Make items full width */
   }
   
   .moontalk-user input {
-    padding: 8px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 200px;
+    width: 100%; /* Full width input on small screens */
   }
   
   .moontalk-submit {
-    background: #1e5de5;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.2s;
+    width: 100%; /* Full width button on small screens */
+    padding: 10px 16px; /* Slightly taller button for mobile */
   }
-  
-  .moontalk-submit:hover {
-    background: #1976d2;
-  }
+}
 
-  .moontalk-submit:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-  
   /* Dark Mode */
   .moontalk-dark {
     background: #222;
