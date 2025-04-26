@@ -11,6 +11,26 @@
   padding: 20px;
 }
 
+/* a tag Link Style */
+.moontalk a {
+  color: #0066cc;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.moontalk a:hover {
+  color: #004499;
+  text-decoration: underline;
+}
+
+.moontalk a:active,
+.moontalk a:focus {
+  color: #cc0000;
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
 .moontalk-vote {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   max-width: 400px;

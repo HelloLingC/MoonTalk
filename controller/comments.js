@@ -47,8 +47,13 @@ function validateComment(c) {
         errors.push('Comment content is required');
     }
     if(c.reply_to && isNaN(c.reply_to)) {
-        console.log(c.reply_to)
         errors.push('Invalid reply_to');
+    }
+    if(c.parent_id && isNaN(c.parent_id)) {
+        errors.push('Invalid parent_id');
+    }
+    if(c.reply_to && !c.parent_id) {
+        errors.push('reply_to requires parent_id');
     }
     if(c.post_id) {
         if (c.post_id.length > 1000) {
