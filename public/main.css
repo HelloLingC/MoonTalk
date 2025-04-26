@@ -4,19 +4,23 @@
     line-height: 1.6;
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
   }
 
-  .moontalk-vote {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #f8f9fa;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: center;
-  }
+.moontalk-comment-outer {
+  background-color: white;
+  padding: 20px;
+}
+
+.moontalk-vote {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: center;
+}
 
   .vote-title {
     margin: 0 0 10px 0;
