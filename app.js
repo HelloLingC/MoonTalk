@@ -17,7 +17,7 @@ const rootPath = process.env.VERCEL ? process.cwd() : __dirname;
 // CORS middleware
 const allowedOrigins = [
     'https://moonlab.top',
-    'http://lycois.org',
+    'https://lycois.org',
     'http://localhost:3000'
   ];
 app.use(cors({
