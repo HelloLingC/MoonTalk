@@ -15,8 +15,18 @@ const router = new Router();
 const rootPath = process.env.VERCEL ? process.cwd() : __dirname;
 
 // CORS middleware
+const allowedOrigins = [
+    'https://moonlab.top',
+    'http://lycois.org',
+    'http://localhost:3000'
+  ];
 app.use(cors({
-    origin: ['https://moonlab.top', 'http://lycois.org'],
+    origin: (ctx) => {
+        if(allowedOrigins.includes(ctx.request.headers.origin)) {
+            return ctx.request.headers.origin;
+        }
+        return null; // Reject other origins
+    },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization']
 }));
