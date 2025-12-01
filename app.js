@@ -11,6 +11,9 @@ const comment = require('./controller/comments');
 const app = new Koa();
 const router = new Router();
 
+// Determine root path for Vercel serverless environment
+const rootPath = process.env.VERCEL ? process.cwd() : __dirname;
+
 // CORS middleware
 app.use(cors({
     origin: ['https://moonlab.top', 'http://lycois.org'],
@@ -33,11 +36,11 @@ app.use(async (ctx, next) => {
 app.use(bodyParser());
 
 // Static files
-app.use(serve(path.join(__dirname, 'public')));
+app.use(serve(path.join(rootPath, 'public')));
 
 // Root route
 router.get("/", async (ctx) => {
-    await send(ctx, 'index.html', { root: __dirname });
+    await send(ctx, 'index.html', { root: rootPath });
 });
 
 // Comment routes
