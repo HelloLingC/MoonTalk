@@ -65,10 +65,10 @@ function validateComment(c) {
     return { ok: errors.length == 0, errors };
 }
 
-exports.createComment = async (req, res) => {
+exports.createComment = async (ctx) => {
     try {
-        const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
-        const jsonO = req.body;
+        const ip = ctx.request.headers['x-forwarded-for']?.split(',')[0] || ctx.request.ip;
+        const jsonO = ctx.request.body;
 
         const window = new JSDOM('').window;
         const DOMPurify = createDOMPurify(window);
@@ -86,7 +86,7 @@ exports.createComment = async (req, res) => {
         jsonO.website = DOMPurify.sanitize(jsonO.website, no_html);
 
         jsonO.ip = ip;
-        jsonO.ua = req.get('User-Agent');
+        jsonO.ua = ctx.get('User-Agent');
         const {ok, errors} = validateComment(jsonO);
         if (!ok) {
             throw new Error('Invaild comment: ' + errors.join(', '));
@@ -98,25 +98,28 @@ exports.createComment = async (req, res) => {
       if (error) {
         throw error;
       }
-      res.status(201).json(data[0]);
+      ctx.status = 201;
+      ctx.body = data[0];
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        ctx.status = 500;
+        ctx.body = { message: err.message };
     }
 }
 
 
-exports.getPostVotes = async (req, res) => {
+exports.getPostVotes = async (ctx) => {
     try {
-        const postId = req.query.postId;
+        const postId = ctx.query.postId;
         const { data, error } = await supabase
             .from('Vote')
             .select('value')
             .eq('post_id', postId);
         if (error) throw error;
-        res.json(data);
+        ctx.body = data;
     } catch (err) {
         console.error('Error querying votes:', err);
-        res.status(500).json({ message: err.message });
+        ctx.status = 500;
+        ctx.body = { message: err.message };
     }
 }
 
@@ -125,10 +128,11 @@ exports.getPostVotes = async (req, res) => {
  * Get total comments number of a post
  * used for pagination
  */
-exports.getCommentsNumber = async (req, res) => {
-    const postId = req.query.postId;
+exports.getCommentsNumber = async (ctx) => {
+    const postId = ctx.query.postId;
     if(!postId) {
-        res.status(500).json({ message: 'Post ID is required' });
+        ctx.status = 500;
+        ctx.body = { message: 'Post ID is required' };
         return;
     }
     const [
@@ -149,23 +153,25 @@ exports.getCommentsNumber = async (req, res) => {
     ]);
 
     if (countError || parentCountError) {
-        res.status(500).json({ message: 'Cannot get comments number: ' +
-             JSON.stringify((countError || parentCountError))});
+        ctx.status = 500;
+        ctx.body = { message: 'Cannot get comments number: ' +
+             JSON.stringify((countError || parentCountError))};
         return;
     }
 
-    res.status(200).json({
+    ctx.status = 200;
+    ctx.body = {
         count: totalCount,
         totalPages: Math.ceil(parentCount / page_size),
-    });
+    };
 }
 
-exports.getAllComments = async (req, res) => {
+exports.getAllComments = async (ctx) => {
     try {
-        const postId = req.query.postId;
-        const parentId = req.query.parentId;
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || page_size;
+        const postId = ctx.query.postId;
+        const parentId = ctx.query.parentId;
+        const page = parseInt(ctx.query.page) || 1;
+        const limit = parseInt(ctx.query.limit) || page_size;
         const skip = (page - 1) * limit;
 
         let query = supabase.from('Comment')
@@ -184,7 +190,8 @@ exports.getAllComments = async (req, res) => {
         const { data, error } = await query;
         if (error) throw error;
         if (data.length === 0) {
-            res.status(200).json({ message: 'No comments found' });
+            ctx.status = 200;
+            ctx.body = { message: 'No comments found' };
             return;
         }
 
@@ -198,10 +205,11 @@ exports.getAllComments = async (req, res) => {
                 };
             })
         );
-        res.json(commentsWithChildren);
+        ctx.body = commentsWithChildren;
     } catch (err) {
         console.error('Error querying comments:', err);
-        res.status(500).json({ message: err.message });
+        ctx.status = 500;
+        ctx.body = { message: err.message };
     }
   };
 
@@ -211,21 +219,21 @@ exports.getAllComments = async (req, res) => {
  * rely on supabase's database functions
  * SELECT EXISTS (SELECT 1 FROM comments WHERE parent_id = comment_id);
 $$ LANGUAGE sql;
- * @param {*} req 
- * @param {*} res 
+ * @param {*} ctx - Koa context object
  */
-exports.hasChildren = async (req, res) => {
+exports.hasChildren = async (ctx) => {
     try {
         // /comments/haschildren/:id or ?id=123
-        const id = req.params.id || req.query.id;
+        const id = ctx.params.id || ctx.query.id;
         if(!id) throw new Error('Comment ID is required');
 
         const { data, error } = await supabase
         .rpc('comment_has_children', { comment_id: id});
         if(error) throw error;
-        res.json(data); // return bool value
+        ctx.body = data; // return bool value
     } catch (err) {
         console.error('Error querying comments:', err);
-        res.status(500).json({ message: err.message });
+        ctx.status = 500;
+        ctx.body = { message: err.message };
     }
 }

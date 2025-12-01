@@ -12,7 +12,7 @@
         "src": "/(.*)",
         "dest": "app.js",
         "headers": {
-          "Access-Control-Allow-Origin": "https://moonlab.top",
+          "Access-Control-Allow-Origin": "https://moonlab.top,http://lycois.org",
           "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization"
         }
@@ -21,7 +21,7 @@
         "src": "/(.*)",
         "methods": ["OPTIONS"],
         "headers": {
-          "Access-Control-Allow-Origin": "https://moonlab.top",
+          "Access-Control-Allow-Origin": "https://moonlab.top,http://lycois.org",
           "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type, Authorization"
         },

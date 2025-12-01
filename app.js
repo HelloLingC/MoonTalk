@@ -1,44 +1,66 @@
-const express = require('express');
+const Koa = require('koa');
+const Router = require('@koa/router');
+const serve = require('koa-static');
+const bodyParser = require('koa-bodyparser');
+const cors = require('@koa/cors');
 require('dotenv').config();
 const path = require('path');
+const send = require('koa-send');
 const comment = require('./controller/comments');
 
-const app = express();
+const app = new Koa();
+const router = new Router();
 
-app.use(express.static(path.join(__dirname, 'public')));
+// CORS middleware
+app.use(cors({
+    origin: ['https://moonlab.top', 'http://lycois.org'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization']
+}));
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://moonlab.top');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    // Allow specific headers
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    // Handle preflight requests (OPTIONS)
-    if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
+// Error handling middleware
+app.use(async (ctx, next) => {
+    try {
+        await next();
+    } catch (err) {
+        ctx.status = err.status || 500;
+        ctx.body = { message: err.message };
+        ctx.app.emit('error', err, ctx);
     }
-    next();
-});
-app.use(express.json());
-
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-const commentRouter = express.Router();
-commentRouter.post('/create', async (req, res) => {
-    await comment.createComment(req, res);
-})
-commentRouter.get('/num', async (req, res) => {
-    await comment.getCommentsNumber(req, res);
-})
-commentRouter.get('/list', async (req, res) => {
-    await comment.getAllComments(req, res);
-})
-commentRouter.get('/haschildren/:id', async (req, res) => {
-    await comment.hasChildren(req, res);
-})
-app.use('/comments', commentRouter);
+// Body parser middleware
+app.use(bodyParser());
 
-app.listen(3000, () => console.log("Server ready on port 3000."));
+// Static files
+app.use(serve(path.join(__dirname, 'public')));
+
+// Root route
+router.get("/", async (ctx) => {
+    await send(ctx, 'index.html', { root: __dirname });
+});
+
+// Comment routes
+router.post('/comments/create', async (ctx) => {
+    await comment.createComment(ctx);
+});
+
+router.get('/comments/num', async (ctx) => {
+    await comment.getCommentsNumber(ctx);
+});
+
+router.get('/comments/list', async (ctx) => {
+    await comment.getAllComments(ctx);
+});
+
+router.get('/comments/haschildren/:id', async (ctx) => {
+    await comment.hasChildren(ctx);
+});
+
+app.use(router.routes());
+app.use(router.allowedMethods());
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server ready on port ${PORT}.`));
 
 module.exports = app;
