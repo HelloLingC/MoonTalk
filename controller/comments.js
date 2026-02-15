@@ -213,6 +213,33 @@ exports.getAllComments = async (ctx) => {
     }
   };
 
+exports.getLatestComments = async (ctx) => {
+    try {
+        const site = (ctx.query.site || '').trim();
+        const limit = Math.min(Math.max(parseInt(ctx.query.limit, 10) || 5, 1), 20);
+
+        let query = supabase.from('Comment')
+            .select('id,username,content,created_at,post_id,website')
+            .eq('status', 'published')
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        if (site) {
+            query = query.ilike('post_id', `%${site}%`);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        ctx.status = 200;
+        ctx.body = data || [];
+    } catch (err) {
+        console.error('Error querying latest comments:', err);
+        ctx.status = 500;
+        ctx.body = { message: err.message };
+    }
+}
+
 
 /**
  * whether a comment has children comment (reply_to)

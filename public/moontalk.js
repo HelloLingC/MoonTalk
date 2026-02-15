@@ -46,6 +46,7 @@ class MoonTalk {
             return resp.text();
         }).then(html => {
             this.el.innerHTML = html;
+            this.latestWidgetEl = this.el.querySelector('.moontalk-latest-widget');
             this.el.querySelector('.moontalk-submit').addEventListener('click', ()=> {
                 this.onSubmit(this);
             })
@@ -57,6 +58,7 @@ class MoonTalk {
             })
             this.el_ok = true;
             this.loadComments();
+            this.loadLatestComments();
         })
     }
 
@@ -166,6 +168,93 @@ class MoonTalk {
         document.querySelector('.moontalk-error-message').textContent = error;
     }
 
+    async loadLatestComments() {
+        if (!this.latestWidgetEl) return;
+        if (!this.conf.site_name) {
+            this.latestWidgetEl.style.display = 'none';
+            return;
+        }
+
+        const loadingEl = this.latestWidgetEl.querySelector('.moontalk-latest-loading');
+        const emptyEl = this.latestWidgetEl.querySelector('.moontalk-latest-empty');
+        const listEl = this.latestWidgetEl.querySelector('.moontalk-latest-list');
+
+        loadingEl.style.display = 'block';
+        emptyEl.style.display = 'none';
+        listEl.innerHTML = '';
+
+        try {
+            const limit = parseInt(this.conf.latest_comments_limit, 10) || 5;
+            const resp = await fetch(
+                `${this.conf.server}/comments/latest?site=${encodeURIComponent(this.conf.site_name)}&limit=${limit}`
+            );
+            if (!resp.ok) {
+                throw new Error(`HTTP error - status: ${resp.status}`);
+            }
+
+            const comments = await resp.json();
+            if (!Array.isArray(comments) || comments.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+            this.renderLatestComments(comments, listEl);
+        } catch (err) {
+            console.error('Failed to load latest comments:', err);
+            emptyEl.style.display = 'block';
+        } finally {
+            loadingEl.style.display = 'none';
+        }
+    }
+
+    renderLatestComments(comments, container) {
+        const html = comments.map((comment) => {
+            const date = new Date(comment.created_at).toLocaleString();
+            const content = this.trimText(this.stripHtml(comment.content || ''), 120);
+            const username = this.escapeHtml(comment.username || 'Anonymous');
+            const post = this.escapeHtml(this.getPostLabel(comment.post_id));
+
+            return `
+                <div class="moontalk-latest-item">
+                    <div class="moontalk-latest-item-header">
+                        <span class="moontalk-latest-author">${username}</span>
+                        <span class="moontalk-latest-date">${date}</span>
+                    </div>
+                    <div class="moontalk-latest-content">${this.escapeHtml(content)}</div>
+                    <div class="moontalk-latest-post">${post}</div>
+                </div>
+            `;
+        }).join('');
+        container.innerHTML = html;
+    }
+
+    getPostLabel(postId) {
+        if (!postId) return '';
+        try {
+            const parsed = new URL(postId);
+            const path = parsed.pathname === '/' ? '' : parsed.pathname;
+            return `${parsed.hostname}${path}`;
+        } catch (_) {
+            return this.trimText(postId, 60);
+        }
+    }
+
+    stripHtml(value) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = value;
+        return tmp.textContent || tmp.innerText || '';
+    }
+
+    escapeHtml(value) {
+        const tmp = document.createElement('div');
+        tmp.textContent = value;
+        return tmp.innerHTML;
+    }
+
+    trimText(value, maxLength) {
+        if (!value || value.length <= maxLength) return value;
+        return `${value.slice(0, maxLength).trim()}...`;
+    }
+
     renderRootComments(comments) {
         const container = document.querySelector('.moontalk-list');
         container.innerHTML = '';
@@ -273,6 +362,7 @@ class MoonTalk {
             page_Key: '',
             page_title: '',
             site_name: '',
+            latest_comments_limit: 5,
             element: '#moontalk',
         };
     }
@@ -292,4 +382,3 @@ class DB {
 //   }
 //   return Artalk.instance.init(options);
 // };
-

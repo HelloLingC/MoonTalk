@@ -66,6 +66,10 @@ router.get('/comments/list', async (ctx) => {
     await comment.getAllComments(ctx);
 });
 
+router.get('/comments/latest', async (ctx) => {
+    await comment.getLatestComments(ctx);
+});
+
 router.get('/comments/haschildren/:id', async (ctx) => {
     await comment.hasChildren(ctx);
 });

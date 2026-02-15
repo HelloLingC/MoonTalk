@@ -11,6 +11,74 @@
   padding: 20px;
 }
 
+.moontalk-latest-widget {
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border: 1px solid #e6edf5;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.moontalk-latest-header {
+  margin-bottom: 10px;
+}
+
+.moontalk-latest-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2a37;
+}
+
+.moontalk-latest-loading,
+.moontalk-latest-empty {
+  display: none;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.moontalk-latest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.moontalk-latest-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #ebf1f7;
+}
+
+.moontalk-latest-item-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.moontalk-latest-author {
+  font-weight: 600;
+  color: #111827;
+}
+
+.moontalk-latest-date {
+  font-size: 0.8rem;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.moontalk-latest-content {
+  font-size: 0.9rem;
+  color: #334155;
+  word-break: break-word;
+}
+
+.moontalk-latest-post {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
 /* a tag Link Style */
 .moontalk a {
   color: #0066cc;
