@@ -8,7 +8,9 @@
           "includeFiles": [
             "index.html",
             "public/**",
-            "controller/**"
+            "controller/**",
+            "services/**",
+            "lib/**"
           ] 
         }
       }

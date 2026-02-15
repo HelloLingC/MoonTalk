@@ -35,15 +35,16 @@
 
     <div id="container">
     </div>
-    <script src="/md5.min.js"></script>
-    <script src="/moontalk.js"></script>
-    <script>
-        new MoonTalk().init({
-            page_key: 'main-page',
+    <script type="module">
+        import MoonTalk from '/moontalk.js';
+
+        const widget = new MoonTalk({
+            postId: 'main-page',
             server: 'https://comment.moonlab.top',
             element: '#container'
-        })
+        });
+
+        widget.mount().catch(console.error);
     </script>
 </body>
-</html>
 </html>

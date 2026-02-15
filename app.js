@@ -6,81 +6,83 @@ const cors = require('@koa/cors');
 require('dotenv').config();
 const path = require('path');
 const send = require('koa-send');
-const comment = require('./controller/comments');
+
+const commentsController = require('./controller/comments.controller');
+const votesController = require('./controller/votes.controller');
+const { HttpError } = require('./lib/http-error');
 
 const app = new Koa();
 const router = new Router();
 
-// Determine root path for Vercel serverless environment
 const rootPath = process.env.VERCEL ? process.cwd() : __dirname;
 
-// CORS middleware
 const allowedOrigins = [
     'https://moonlab.top',
     'https://lycois.org',
-    'http://localhost:3000'
-  ];
+    'http://localhost:3000',
+];
+
 app.use(cors({
     origin: (ctx) => {
-        if(allowedOrigins.includes(ctx.request.headers.origin)) {
+        if (allowedOrigins.includes(ctx.request.headers.origin)) {
             return ctx.request.headers.origin;
         }
-        return null; // Reject other origins
+        return null;
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization']
+    allowHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// Error handling middleware
 app.use(async (ctx, next) => {
     try {
         await next();
+
+        if (ctx.status === 404 && !ctx.body) {
+            ctx.status = 404;
+            ctx.body = {
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Resource not found',
+                },
+            };
+        }
     } catch (err) {
+        if (err instanceof HttpError) {
+            ctx.status = err.status;
+            ctx.body = {
+                error: {
+                    code: err.code,
+                    message: err.message,
+                    details: err.details,
+                },
+            };
+            return;
+        }
+
+        console.error('Unhandled error:', err);
         ctx.status = err.status || 500;
-        ctx.body = { message: err.message };
-        ctx.app.emit('error', err, ctx);
+        ctx.body = {
+            error: {
+                code: 'INTERNAL_ERROR',
+                message: err.message || 'Unexpected server error',
+            },
+        };
     }
 });
 
-// Body parser middleware
 app.use(bodyParser());
-
-// Static files
 app.use(serve(path.join(rootPath, 'public')));
 
-// Root route
-router.get("/", async (ctx) => {
+router.get('/', async (ctx) => {
     await send(ctx, 'index.html', { root: rootPath });
 });
 
-// Comment routes
-router.post('/comments/create', async (ctx) => {
-    await comment.createComment(ctx);
-});
+router.post('/api/v2/posts/:postId/comments', commentsController.createPostComment);
+router.get('/api/v2/posts/:postId/comments', commentsController.getPostComments);
+router.get('/api/v2/comments/latest', commentsController.getLatestComments);
 
-router.get('/comments/num', async (ctx) => {
-    await comment.getCommentsNumber(ctx);
-});
-
-router.get('/comments/list', async (ctx) => {
-    await comment.getAllComments(ctx);
-});
-
-router.get('/comments/votes', async (ctx) => {
-    await comment.getPostVotes(ctx);
-});
-
-router.post('/comments/vote', async (ctx) => {
-    await comment.submitPostVote(ctx);
-});
-
-router.get('/comments/latest', async (ctx) => {
-    await comment.getLatestComments(ctx);
-});
-
-router.get('/comments/haschildren/:id', async (ctx) => {
-    await comment.hasChildren(ctx);
-});
+router.get('/api/v2/posts/:postId/votes', votesController.getPostVotes);
+router.put('/api/v2/posts/:postId/vote', votesController.setPostVote);
 
 app.use(router.routes());
 app.use(router.allowedMethods());
