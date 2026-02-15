@@ -170,10 +170,6 @@ class MoonTalk {
 
     async loadLatestComments() {
         if (!this.latestWidgetEl) return;
-        if (!this.conf.site_name) {
-            this.latestWidgetEl.style.display = 'none';
-            return;
-        }
 
         const loadingEl = this.latestWidgetEl.querySelector('.moontalk-latest-loading');
         const emptyEl = this.latestWidgetEl.querySelector('.moontalk-latest-empty');
@@ -185,9 +181,13 @@ class MoonTalk {
 
         try {
             const limit = parseInt(this.conf.latest_comments_limit, 10) || 5;
-            const resp = await fetch(
-                `${this.conf.server}/comments/latest?site=${encodeURIComponent(this.conf.site_name)}&limit=${limit}`
-            );
+            const siteFilter = this.getLatestSiteFilter();
+            const query = new URLSearchParams({ limit: String(limit) });
+            if (siteFilter) {
+                query.set('site', siteFilter);
+            }
+
+            const resp = await fetch(`${this.conf.server}/comments/latest?${query.toString()}`);
             if (!resp.ok) {
                 throw new Error(`HTTP error - status: ${resp.status}`);
             }
@@ -203,6 +203,21 @@ class MoonTalk {
             emptyEl.style.display = 'block';
         } finally {
             loadingEl.style.display = 'none';
+        }
+    }
+
+    getLatestSiteFilter() {
+        if (this.conf.site_name && this.conf.site_name.trim()) {
+            return this.conf.site_name.trim();
+        }
+        const pageKey = (this.conf.page_key || '').trim();
+        if (!pageKey) return '';
+
+        try {
+            return new URL(pageKey).hostname;
+        } catch (_) {
+            const normalized = pageKey.replace(/^https?:\/\//i, '');
+            return normalized.split('/')[0];
         }
     }
 
