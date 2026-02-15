@@ -66,6 +66,14 @@ router.get('/comments/list', async (ctx) => {
     await comment.getAllComments(ctx);
 });
 
+router.get('/comments/votes', async (ctx) => {
+    await comment.getPostVotes(ctx);
+});
+
+router.post('/comments/vote', async (ctx) => {
+    await comment.submitPostVote(ctx);
+});
+
 router.get('/comments/latest', async (ctx) => {
     await comment.getLatestComments(ctx);
 });

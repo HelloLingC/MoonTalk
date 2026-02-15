@@ -3,6 +3,12 @@ class MoonTalk {
         this.conf = {};
         this.currentPage = 0;
         this.totalPages = 0;
+        this.vote = {
+            upvotes: 0,
+            downvotes: 0,
+            userVote: 0,
+            loading: false,
+        };
     }
 
     init(options) {
@@ -56,10 +62,119 @@ class MoonTalk {
             this.el.querySelector('.moontalk-paginator-next').addEventListener('click', () => {
                 this.goToNextPage();
             })
+            this.initVoteWidget();
             this.el_ok = true;
             this.loadComments();
             this.loadLatestComments();
+            this.loadPostVotes();
         })
+    }
+
+    initVoteWidget() {
+        this.upvoteBtn = this.el.querySelector('.vote-btn.upvote');
+        this.downvoteBtn = this.el.querySelector('.vote-btn.downvote');
+
+        if (!this.upvoteBtn || !this.downvoteBtn) return;
+
+        this.upvoteCountEl = this.upvoteBtn.querySelector('.vote-count');
+        this.downvoteCountEl = this.downvoteBtn.querySelector('.vote-count');
+
+        this.upvoteBtn.addEventListener('click', () => {
+            this.submitVote(1);
+        });
+        this.downvoteBtn.addEventListener('click', () => {
+            this.submitVote(-1);
+        });
+
+        this.updateVoteUI();
+    }
+
+    normalizeVoteSummary(summary) {
+        const userVote = Number(summary?.userVote);
+        return {
+            upvotes: Number(summary?.upvotes) || 0,
+            downvotes: Number(summary?.downvotes) || 0,
+            userVote: [-1, 0, 1].includes(userVote) ? userVote : 0,
+        };
+    }
+
+    updateVoteUI() {
+        if (!this.upvoteBtn || !this.downvoteBtn) return;
+
+        if (this.upvoteCountEl) {
+            this.upvoteCountEl.textContent = this.vote.upvotes;
+        }
+        if (this.downvoteCountEl) {
+            this.downvoteCountEl.textContent = this.vote.downvotes;
+        }
+        this.upvoteBtn.classList.toggle('active', this.vote.userVote === 1);
+        this.downvoteBtn.classList.toggle('active', this.vote.userVote === -1);
+    }
+
+    setVoteLoading(loading) {
+        this.vote.loading = loading;
+        if (!this.upvoteBtn || !this.downvoteBtn) return;
+        this.upvoteBtn.disabled = loading;
+        this.downvoteBtn.disabled = loading;
+    }
+
+    async loadPostVotes() {
+        if (!this.upvoteBtn || !this.downvoteBtn) return;
+        this.setVoteLoading(true);
+        try {
+            const resp = await fetch(`${this.conf.server}/comments/votes?postId=${encodeURIComponent(this.conf.page_key)}`);
+            const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(data?.message || `HTTP error - status: ${resp.status}`);
+            }
+
+            this.vote = {
+                ...this.vote,
+                ...this.normalizeVoteSummary(data),
+            };
+            this.updateVoteUI();
+        } catch (err) {
+            console.error('Failed to load votes:', err);
+            this.showError(err.message || 'Failed to load votes');
+        } finally {
+            this.setVoteLoading(false);
+        }
+    }
+
+    async submitVote(targetVote) {
+        if (this.vote.loading) return;
+        const nextVote = this.vote.userVote === targetVote ? 0 : targetVote;
+        this.showError('');
+        this.setVoteLoading(true);
+
+        try {
+            const resp = await fetch(`${this.conf.server}/comments/vote`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    post_id: this.conf.page_key,
+                    value: nextVote,
+                }),
+            });
+
+            const data = await resp.json();
+            if (!resp.ok) {
+                throw new Error(data?.message || `HTTP error - status: ${resp.status}`);
+            }
+
+            this.vote = {
+                ...this.vote,
+                ...this.normalizeVoteSummary(data),
+            };
+            this.updateVoteUI();
+        } catch (err) {
+            console.error('Failed to submit vote:', err);
+            this.showError(err.message || 'Failed to submit vote');
+        } finally {
+            this.setVoteLoading(false);
+        }
     }
 
     loadStyles() {

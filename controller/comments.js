@@ -6,6 +6,36 @@ const supabase = createClient(process.env.supabase_url, process.env.supabase_key
 
 const page_size = 10;
 
+function getRequestIp(ctx) {
+    return ctx.request.headers['x-forwarded-for']?.split(',')[0].trim() || ctx.request.ip;
+}
+
+async function getVoteSummary(postId, ip) {
+    const { data, error } = await supabase
+        .from('Vote')
+        .select('value,ip')
+        .eq('post_id', postId);
+
+    if (error) throw error;
+
+    let upvotes = 0;
+    let downvotes = 0;
+    let userVote = 0;
+
+    for (const vote of data || []) {
+        if (vote.value === 1) upvotes += 1;
+        if (vote.value === -1) downvotes += 1;
+        if (ip && vote.ip === ip) userVote = vote.value;
+    }
+
+    return {
+        upvotes,
+        downvotes,
+        score: upvotes - downvotes,
+        userVote,
+    };
+}
+
 function validateComment(c) {
     const errors = [];
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -67,7 +97,7 @@ function validateComment(c) {
 
 exports.createComment = async (ctx) => {
     try {
-        const ip = ctx.request.headers['x-forwarded-for']?.split(',')[0] || ctx.request.ip;
+        const ip = getRequestIp(ctx);
         const jsonO = ctx.request.body;
 
         const window = new JSDOM('').window;
@@ -110,14 +140,77 @@ exports.createComment = async (ctx) => {
 exports.getPostVotes = async (ctx) => {
     try {
         const postId = ctx.query.postId;
-        const { data, error } = await supabase
-            .from('Vote')
-            .select('value')
-            .eq('post_id', postId);
-        if (error) throw error;
-        ctx.body = data;
+        if (!postId) {
+            ctx.status = 400;
+            ctx.body = { message: 'Post ID is required' };
+            return;
+        }
+
+        const ip = getRequestIp(ctx);
+        const summary = await getVoteSummary(postId, ip);
+        ctx.status = 200;
+        ctx.body = summary;
     } catch (err) {
         console.error('Error querying votes:', err);
+        ctx.status = 500;
+        ctx.body = { message: err.message };
+    }
+}
+
+exports.submitPostVote = async (ctx) => {
+    try {
+        const postId = String(ctx.request.body?.post_id || '').trim();
+        const value = Number(ctx.request.body?.value);
+        const ip = getRequestIp(ctx);
+
+        if (!postId) {
+            ctx.status = 400;
+            ctx.body = { message: 'Post ID is required' };
+            return;
+        }
+
+        if (![-1, 0, 1].includes(value)) {
+            ctx.status = 400;
+            ctx.body = { message: 'Vote value must be -1, 0, or 1' };
+            return;
+        }
+
+        if (value === 0) {
+            const { error } = await supabase
+                .from('Vote')
+                .delete()
+                .eq('post_id', postId)
+                .eq('ip', ip);
+            if (error) throw error;
+        } else {
+            const { data: existingVotes, error: findError } = await supabase
+                .from('Vote')
+                .select('post_id')
+                .eq('post_id', postId)
+                .eq('ip', ip)
+                .limit(1);
+            if (findError) throw findError;
+
+            if (existingVotes && existingVotes.length > 0) {
+                const { error: updateError } = await supabase
+                    .from('Vote')
+                    .update({ value })
+                    .eq('post_id', postId)
+                    .eq('ip', ip);
+                if (updateError) throw updateError;
+            } else {
+                const { error: insertError } = await supabase
+                    .from('Vote')
+                    .insert([{ post_id: postId, value, ip }]);
+                if (insertError) throw insertError;
+            }
+        }
+
+        const summary = await getVoteSummary(postId, ip);
+        ctx.status = 200;
+        ctx.body = summary;
+    } catch (err) {
+        console.error('Error submitting vote:', err);
         ctx.status = 500;
         ctx.body = { message: err.message };
     }
