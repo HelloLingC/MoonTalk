@@ -61,7 +61,7 @@ function createCommentElement(comment, idToUsername, className) {
     avatar.className = 'moontalk-comment-avatar';
     avatar.alt = 'Avatar';
     avatar.loading = 'lazy';
-    avatar.src = `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(comment.username || 'anonymous')}&size=40`;
+    avatar.src = `https://api.dicebear.com/9.x/thumbs/svg?seed=${encodeURIComponent(comment.username || 'anonymous')}&size=40`;
 
     const username = document.createElement('span');
     username.className = 'moontalk-comment-username';
