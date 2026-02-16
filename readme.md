@@ -89,6 +89,11 @@ await widget.mount();
 ### Latest comments
 - `GET /api/v2/comments/latest?site=example.com&limit=5`
 
+### RSS feed (latest comments)
+- `GET /rss/comments.xml?site=example.com&limit=20`
+- Returns RSS 2.0 XML with latest comments for a site (or all sites when `site` is omitted).
+- `limit` range: `1-20` (default `5`).
+
 ### Read vote summary
 - `GET /api/v2/posts/:postId/votes`
 

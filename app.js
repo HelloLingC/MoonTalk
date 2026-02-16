@@ -80,6 +80,7 @@ router.get('/', async (ctx) => {
 router.post('/api/v2/posts/:postId/comments', commentsController.createPostComment);
 router.get('/api/v2/posts/:postId/comments', commentsController.getPostComments);
 router.get('/api/v2/comments/latest', commentsController.getLatestComments);
+router.get('/rss/comments.xml', commentsController.getLatestCommentsRss);
 
 router.get('/api/v2/posts/:postId/votes', votesController.getPostVotes);
 router.put('/api/v2/posts/:postId/vote', votesController.setPostVote);

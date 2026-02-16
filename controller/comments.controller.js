@@ -6,6 +6,7 @@ const {
     validateLatestCommentsInput,
 } = require('../lib/validate');
 const { getRequestIp } = require('../lib/request');
+const { buildCommentsRss } = require('../lib/rss');
 
 async function createPostComment(ctx) {
     const postId = ctx.params.postId;
@@ -40,8 +41,29 @@ async function getLatestComments(ctx) {
     ok(ctx, data);
 }
 
+async function getLatestCommentsRss(ctx) {
+    const { site, limit } = validateLatestCommentsInput(ctx.query.site, ctx.query.limit);
+    const comments = await commentsService.getLatestComments({ site, limit });
+
+    const query = new URLSearchParams();
+    if (site) query.set('site', site);
+    query.set('limit', String(limit));
+
+    const queryString = query.toString();
+    const feedUrl = `${ctx.origin}${ctx.path}${queryString ? `?${queryString}` : ''}`;
+
+    ctx.status = 200;
+    ctx.type = 'application/rss+xml; charset=utf-8';
+    ctx.body = buildCommentsRss({
+        feedUrl,
+        site,
+        comments,
+    });
+}
+
 module.exports = {
     createPostComment,
     getPostComments,
     getLatestComments,
+    getLatestCommentsRss,
 };
