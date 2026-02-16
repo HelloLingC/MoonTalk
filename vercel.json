@@ -2,12 +2,19 @@
     "version": 2,
     "builds": [
       {
+        "src": "public/**",
+        "use": "@vercel/static"
+      },
+      {
+        "src": "index.html",
+        "use": "@vercel/static"
+      },
+      {
         "src": "app.js",
         "use": "@vercel/node",
         "config": { 
           "includeFiles": [
             "index.html",
-            "public/**",
             "controller/**",
             "services/**",
             "lib/**"
@@ -16,6 +23,38 @@
       }
     ],
     "routes": [
+      {
+        "src": "/moontalk.js",
+        "dest": "/public/moontalk.js"
+      },
+      {
+        "src": "/moontalk.js.map",
+        "dest": "/public/moontalk.js.map"
+      },
+      {
+        "src": "/moontalk/(.*)",
+        "dest": "/public/moontalk/$1"
+      },
+      {
+        "src": "/main.css",
+        "dest": "/public/main.css"
+      },
+      {
+        "src": "/header.html",
+        "dest": "/public/header.html"
+      },
+      {
+        "src": "/md5.min.js",
+        "dest": "/public/md5.min.js"
+      },
+      {
+        "src": "/",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/index.html",
+        "dest": "/index.html"
+      },
       {
         "src": "/(.*)",
         "dest": "app.js"
