@@ -1,8 +1,8 @@
-import MoonTalk, { MoonTalk as MoonTalkNamed } from './moontalk/index.js';
+import { MoonTalk } from './moontalk/index.js';
 
 if (typeof window !== 'undefined') {
-    window.MoonTalk = MoonTalkNamed;
+    window.MoonTalk = MoonTalk;
 }
 
-export { MoonTalkNamed as MoonTalk };
+export { MoonTalk };
 export default MoonTalk;
