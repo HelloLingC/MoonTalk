@@ -538,8 +538,30 @@
   box-shadow: none;
 }
 
+.moontalk.moontalk-theme-dark .upvote {
+  color: #4ade80;
+  border-color: #4ade80;
+}
+
+.moontalk.moontalk-theme-dark .upvote.active {
+  color: #052e16;
+  background-color: #4ade80;
+  border-color: #4ade80;
+}
+
 .moontalk.moontalk-theme-dark .upvote:hover {
   background-color: #12331f;
+}
+
+.moontalk.moontalk-theme-dark .downvote {
+  color: #f87171;
+  border-color: #f87171;
+}
+
+.moontalk.moontalk-theme-dark .downvote.active {
+  color: #450a0a;
+  background-color: #f87171;
+  border-color: #f87171;
 }
 
 .moontalk.moontalk-theme-dark .downvote:hover {
