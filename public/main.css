@@ -473,6 +473,187 @@
   cursor: not-allowed;
 }
 
+.moontalk.moontalk-theme-dark {
+  color: #e5e7eb;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-comment-outer {
+  background-color: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+}
+
+.moontalk.moontalk-theme-dark a {
+  color: #7cc4ff;
+}
+
+.moontalk.moontalk-theme-dark a:hover {
+  color: #a9daff;
+}
+
+.moontalk.moontalk-theme-dark a:focus {
+  outline-color: #7cc4ff;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-latest-widget {
+  border-color: #2d3a4d;
+  background: #0b1220;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-latest-title,
+.moontalk.moontalk-theme-dark .moontalk-latest-author {
+  color: #f3f4f6;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-latest-loading,
+.moontalk.moontalk-theme-dark .moontalk-latest-empty,
+.moontalk.moontalk-theme-dark .moontalk-latest-date,
+.moontalk.moontalk-theme-dark .moontalk-latest-post {
+  color: #94a3b8;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-latest-item {
+  background: #111827;
+  border-color: #273449;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-latest-content {
+  color: #cbd5e1;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-vote {
+  background-color: #0f172a;
+  border: 1px solid #1f2937;
+  box-shadow: none;
+}
+
+.moontalk.moontalk-theme-dark .vote-title {
+  color: #e5e7eb;
+}
+
+.moontalk.moontalk-theme-dark .vote-btn {
+  background: #111827;
+  border-color: #334155;
+  color: #e5e7eb;
+  box-shadow: none;
+}
+
+.moontalk.moontalk-theme-dark .upvote:hover {
+  background-color: #12331f;
+}
+
+.moontalk.moontalk-theme-dark .downvote:hover {
+  background-color: #3a1515;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-count {
+  color: #cbd5e1;
+  background: #1f2937;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-comment,
+.moontalk.moontalk-theme-dark .moontalk-subcomment {
+  border-bottom-color: #1f2937;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-subcomment {
+  border-left-color: #334155;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-comment-avatar {
+  background: #334155;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-comment-date,
+.moontalk.moontalk-theme-dark .moontalk-empty,
+.moontalk.moontalk-theme-dark .moontalk-loading {
+  color: #9ca3af;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-comment-reply {
+  color: #cbd5e1;
+  background-color: #111827;
+  border-color: #334155;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-comment-reply:hover {
+  background-color: #1f2937;
+  border-color: #475569;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-comment-reply:focus {
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.35);
+}
+
+.moontalk.moontalk-theme-dark .moontalk-loading-spinner {
+  background-color: #111827;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-spinner-path {
+  stroke: #60a5fa;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-pagination button {
+  border-color: #334155;
+  background-color: #111827;
+  color: #e5e7eb;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-pagination button:hover:not(:disabled) {
+  background-color: #1f2937;
+  border-color: #475569;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-error-wrapper {
+  background-color: #3b1212;
+  border-color: #7f1d1d;
+  color: #fecaca;
+}
+
+.moontalk.moontalk-theme-dark .error-icon {
+  color: #f87171;
+}
+
+.moontalk.moontalk-theme-dark .success-message {
+  background-color: #052e16;
+  border-color: #166534;
+  color: #bbf7d0;
+}
+
+.moontalk.moontalk-theme-dark .success-icon {
+  color: #4ade80;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-editor {
+  background: #0b1220;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-content,
+.moontalk.moontalk-theme-dark .moontalk-user input {
+  border-color: #334155;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-content::placeholder,
+.moontalk.moontalk-theme-dark .moontalk-user input::placeholder {
+  color: #9ca3af;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-submit {
+  background: #2563eb;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-submit:hover {
+  background: #1d4ed8;
+}
+
+.moontalk.moontalk-theme-dark .moontalk-submit:disabled {
+  background: #4b5563;
+}
+
 @keyframes rotate {
   0% {
     transform: rotate(0deg);

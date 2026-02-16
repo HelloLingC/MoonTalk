@@ -13,6 +13,7 @@ A modular comment widget with voting for static or dynamic websites.
     server: 'https://comment.moonlab.top',
     postId: 'my-post-key',
     element: '#moontalk-container',
+    theme: 'dark',
     siteName: 'example.com',
     latestCommentsLimit: 5,
   });
@@ -30,6 +31,7 @@ const widget = new MoonTalk({
   server: 'https://comment.moonlab.top',
   postId: 'my-post-key',
   element: '#moontalk-container',
+  theme: 'auto', // 'auto' | 'light' | 'dark'
   siteName: 'example.com',
   latestCommentsLimit: 5,
   pageSize: 10,

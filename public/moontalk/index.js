@@ -12,6 +12,7 @@ const DEFAULT_OPTIONS = {
     latestCommentsLimit: 5,
     pageSize: 10,
     element: '#moontalk',
+    theme: 'auto',
 };
 
 export class MoonTalk {
@@ -39,6 +40,7 @@ export class MoonTalk {
         const html = await this.fetchTemplate();
         this.container.innerHTML = html;
         this.root = this.container.querySelector('.moontalk') || this.container;
+        this.applyTheme();
 
         this.captureRefs();
         this.bindEvents();
@@ -65,9 +67,34 @@ export class MoonTalk {
         if (!this.options.element) {
             throw new Error('missed argument: element');
         }
+        const theme = String(this.options.theme || 'auto').toLowerCase();
+        if (!['auto', 'light', 'dark'].includes(theme)) {
+            throw new Error('theme must be one of: auto, light, dark');
+        }
+        this.options.theme = theme;
         this.options.server = this.options.server.endsWith('/')
             ? this.options.server.slice(0, -1)
             : this.options.server;
+    }
+
+    applyTheme() {
+        this.root.classList.remove('moontalk-theme-auto', 'moontalk-theme-light', 'moontalk-theme-dark');
+        if (this.options.theme === 'dark') {
+            this.root.classList.add('moontalk-theme-dark');
+            return;
+        }
+
+        if (this.options.theme === 'light') {
+            this.root.classList.add('moontalk-theme-light');
+            return;
+        }
+
+        const prefersDark = typeof window !== 'undefined'
+            && typeof window.matchMedia === 'function'
+            && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        this.root.classList.add('moontalk-theme-auto');
+        this.root.classList.add(prefersDark ? 'moontalk-theme-dark' : 'moontalk-theme-light');
     }
 
     async fetchTemplate() {
