@@ -142,6 +142,26 @@
   color: #fff;
 }
 
+.vote-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vote-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.vote-icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .upvote {
   color: #2e7d32;
   border-color: #2e7d32;
