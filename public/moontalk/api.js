@@ -25,13 +25,16 @@ export class ApiClient {
         return payload;
     }
 
-    async createComment(postId, comment) {
+    async createComment(postId, siteName, comment) {
         const payload = await this.requestJson(`/api/v2/posts/${encodeURIComponent(postId)}/comments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(comment),
+            body: JSON.stringify({
+                ...comment,
+                site_name: siteName || null,
+            }),
         });
         return payload.data;
     }

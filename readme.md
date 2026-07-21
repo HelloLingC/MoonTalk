@@ -40,6 +40,9 @@ const widget = new MoonTalk({
 await widget.mount();
 ```
 
+`siteName` is stored independently from `postId` and scopes the "Latest on
+this site" list. Use the same stable hostname for every page on one site.
+
 ## Backend API (v2)
 
 ### Create comment
@@ -48,6 +51,7 @@ await widget.mount();
 
 ```json
 {
+  "site_name": "example.com",
   "username": "alice",
   "content": "hello world",
   "email": "alice@example.com",

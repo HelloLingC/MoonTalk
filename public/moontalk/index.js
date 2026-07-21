@@ -266,7 +266,7 @@ export class MoonTalk {
                 content = content.slice(this.state.reply.mention.length);
             }
 
-            await this.api.createComment(this.options.postId, {
+            await this.api.createComment(this.options.postId, this.options.siteName, {
                 content,
                 username: this.refs.name.value,
                 email: this.refs.email.value,

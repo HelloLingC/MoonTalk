@@ -37,7 +37,7 @@ async function assertCommentBelongsToPost(commentId, postId, fieldName) {
     return data[0];
 }
 
-async function createComment({ postId, username, email, website, content, parentId, replyTo, ip, userAgent }) {
+async function createComment({ postId, siteName, username, email, website, content, parentId, replyTo, ip, userAgent }) {
     let parent = null;
     let reply = null;
 
@@ -58,6 +58,7 @@ async function createComment({ postId, username, email, website, content, parent
 
     const payload = {
         post_id: postId,
+        site_name: siteName,
         username,
         email,
         website,
@@ -160,13 +161,13 @@ async function listComments({ postId, page, limit }) {
 async function getLatestComments({ site, limit }) {
     let query = supabase
         .from('Comment')
-        .select('id,username,content,created_at,post_id,website')
+        .select('id,username,content,created_at,post_id,site_name,website')
         .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(limit);
 
     if (site) {
-        query = query.ilike('post_id', `%${site}%`);
+        query = query.eq('site_name', site);
     }
 
     const { data, error } = await query;

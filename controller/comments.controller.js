@@ -14,6 +14,7 @@ async function createPostComment(ctx) {
 
     const data = await commentsService.createComment({
         postId: validated.postId,
+        siteName: validated.siteName,
         username: validated.username,
         email: validated.email,
         website: validated.website,

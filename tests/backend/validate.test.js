@@ -9,6 +9,7 @@ const {
 
 test('validateCreateCommentInput accepts valid payload', () => {
     const result = validateCreateCommentInput('post-1', {
+        site_name: 'Example.COM',
         username: 'alice',
         content: 'hello world',
         email: 'alice@example.com',
@@ -18,6 +19,7 @@ test('validateCreateCommentInput accepts valid payload', () => {
     });
 
     assert.equal(result.postId, 'post-1');
+    assert.equal(result.siteName, 'example.com');
     assert.equal(result.username, 'alice');
     assert.equal(result.parentId, 12);
     assert.equal(result.replyTo, 14);
